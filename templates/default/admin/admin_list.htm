@@ -1,0 +1,150 @@
+{template header_admin}
+<div class="console-title">
+	<a href="#add" class="submit f-right" id="add">添加账户</a>
+	<h2>账户列表</h2>
+</div>
+<div class="table-wrap">
+<form method="post" action="">
+    <input type="hidden" name="formsubmit" value="yes">
+    <input type="hidden" name="formhash" value="{FORMHASH}" />
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="listtable">
+    <thead>
+    <tr>
+      <th width="20">选</th>
+      <th width="30">头像</th>
+      <th width="100">账号</th>
+      <th width="100">手机号</th>
+      <th>电子邮箱</th>
+      <th width="130">登录IP</th>
+      <th width="140">登录时间</th>
+      <th width="40">编辑</th>
+    </tr>
+    </thead>
+    <tbody id="members">
+    {loop $adminlist $admin}
+    <tr>
+      <td><input type="checkbox" class="checkbox checkmark" name="delete[]" value="{$admin[adminid]}" /></td>
+      <td><img src="{echo avatar($admin[avatar])}" width="30" height="30" style="border-radius:100%;"></td>
+      <th>$admin[admin]</th>
+      <td>$admin[mobile]</td>
+      <td>$admin[email]</td>
+      <td><a href="http://www.ip138.com/ips.asp?ip={$admin[loginip]}" target="_blank">$admin[loginip]</a></td>
+      <td>{echo @date('Y-m-d H:i:s', $admin[logintime])}</td>
+      <td><a href="#edit" data-id="$admin[adminid]" rel="edit">编辑</a></td>
+    </tr>
+    {/loop}
+    </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="12">
+            <label><input type="checkbox" class="checkbox checkall" /> 全选</label>
+            <label><input type="radio" name="option" value="delete" checked> 删除</label>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="12">
+            <span class="pages">{$pages}</span>
+            <input type="submit" class="button" value="提交" />
+            <input type="button" class="button cancel" value="刷新" onclick="window.location.reload()" />
+        </td>
+    </tr>
+    </tfoot>
+  </table>
+ </form>
+</div>
+<script type="text/x-template" id="J-add-admin-tpl">
+<form method="post" id="J-add-admin-form">
+<input type="hidden" name="formsubmit" value="yes">
+<input type="hidden" name="formhash" value="{FORMHASH}" />
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+	<tbody>
+    	<tr>
+        	<td style="width:80px; text-align:right; padding-right:20px;">账号</td>
+            <td><input type="text" class="input-text" name="admin[admin]" value="#admin#"></td>
+        </tr>
+        <tr>
+        	<td style="width:80px; text-align:right; padding-right:20px;">手机</td>
+            <td><input type="text" class="input-text" name="admin[mobile]" value="#mobile#"></td>
+        </tr>
+        <tr>
+        	<td style="width:80px; text-align:right; padding-right:20px;">邮箱</td>
+            <td><input type="text" class="input-text" name="admin[email]" value="#email#"></td>
+        </tr>
+        <tr>
+        	<td style="width:80px; text-align:right; padding-right:20px;">密码</td>
+            <td><input type="password" class="input-text" name="admin[password]" placeholder="******"></td>
+        </tr>
+    </tbody>
+</table>
+</form>
+</script>
+<script type="text/javascript">
+$("#add").click(function(e) {
+	var data = {adminid:0,admin:'',mobile:'',email:''};
+	var html = $("#J-add-admin-tpl").html().replace(/#(.*?)#/g,function(s,k){return data[k];});
+    DSXUI.dialog({
+		html:html,
+		width:400,
+		title:'添加账号',
+		onConfirm:function(dlg){
+			var admin = $("[name='admin[admin]']").val();
+			var password = $("[name='admin[password]']").val();
+			if(admin.length < 2 || password.length <6){
+				DSXUI.error('账号或密码输入错误');
+			}else {
+				$("#J-add-admin-form").attr('action','/?m=$G[m]&c=$G[c]&a=add');
+				$("#J-add-admin-form").ajaxSubmit({
+					dataType:'json',
+					success:function(json){
+						if(json.errno == 0){
+							dlg.close();
+							DSXUI.success('账号添加成功', DSXUtil.reFresh);
+						}else {
+							DSXUI.error(json.error);
+						}
+					}
+				});
+			}
+		}
+	});
+});
+$("a[rel=edit]").click(function(e) {
+    var adminid = $(this).attr('data-id');
+	$.ajax({
+		url:'/?m=$G[m]&c=$G[c]&a=edit&adminid='+adminid,
+		dataType:"json",
+		success: function(json){
+			if(json.errno == 0){
+				var data = json.data;
+				var html = $("#J-add-admin-tpl").html().replace(/#(.*?)#/g,function(s,k){return data[k];});
+				DSXUI.dialog({
+					html:html,
+					width:400,
+					title:'编辑账号',
+					onConfirm:function(dlg){
+						var admin = $("[name='admin[admin]']").val();
+						var password = $("[name='admin[password]']").val();
+						if(admin.length < 2){
+							DSXUI.error('账号输入错误');
+						}else {
+							$("#J-add-admin-form").attr('action','/?m=$G[m]&c=$G[c]&a=edit&adminid='+adminid);
+							$("#J-add-admin-form").ajaxSubmit({
+								dataType:'json',
+								success:function(json){
+									if(json.errno == 0){
+										dlg.close();
+										DSXUI.success('账号修改成功', DSXUtil.reFresh);
+									}else {
+										DSXUI.error(json.error);
+									}
+								}
+							});
+						}
+					}
+				});
+			}
+		}
+	});
+});
+</script>
+{template footer_admin}

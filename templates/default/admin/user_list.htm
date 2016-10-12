@@ -1,0 +1,53 @@
+{template header_admin}
+<div class="console-title">
+	<a href="/?m=$G[m]&c=$G[c]&a=add" class="submit f-right" id="add">添加用户</a>
+	<h2>用户列表</h2>
+</div>
+<div class="table-wrap">
+<form method="post" action="">
+    <input type="hidden" name="formsubmit" value="yes">
+    <input type="hidden" name="formhash" value="{FORMHASH}" />
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="listtable">
+    <thead>
+    <tr>
+      <th width="20">选</th>
+      <th width="160">账号</th>
+      <th>目录</th>
+      <th width="100">磁盘限额</th>
+      <th width="100">上传限速</th>
+      <th width="100">下载限速</th>
+      <th width="40">编辑</th>
+    </tr>
+    </thead>
+    <tbody id="members">
+    {loop $userlist $userid $user}
+    <tr>
+      <td><input type="checkbox" class="checkbox checkmark" name="delete[]" value="{$userid}" /></td>
+      <th>$user[User]</th>
+      <td>$user[Dir]</td>
+      <td>$user[QuotaSize]MB</td>
+      <td>$user[ULBandwidth]KB/s</td>
+      <td>$user[DLBandwidth]KB/s</td>
+      <td><a href="/?m=$G[m]&c=$G[c]&a=edit&userid=$userid">编辑</a></td>
+    </tr>
+    {/loop}
+    </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="12">
+            <label><input type="checkbox" class="checkbox checkall" /> 全选</label>
+            <label><input type="radio" name="option" value="delete" checked> 删除</label>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="12">
+            <span class="pages">{$pages}</span>
+            <input type="submit" class="button" value="提交" />
+            <input type="button" class="button cancel" value="刷新" onclick="window.location.reload()" />
+        </td>
+    </tr>
+    </tfoot>
+  </table>
+ </form>
+</div>
+{template footer_admin}

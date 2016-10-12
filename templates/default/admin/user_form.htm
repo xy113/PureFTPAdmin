@@ -1,0 +1,116 @@
+{template header_admin}
+<div class="console-title">
+	<a href="/?m=$G[m]&c=$G[c]" class="submit f-right" id="add">用户列表</a>
+	<h2>{if $G[a]=='add'}添加用户{else}编辑用户{/if}</h2>
+</div>
+<div class="area">
+<form method="post" id="userForm">
+<input type="hidden" name="formsubmit" value="yes" />
+<input type="hidden" name="formhash" value="{FORMHASH}">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" id="formtable">
+<tbody>
+    <tr>
+      <td width="60">账号</td>
+      <td><input type="text" class="input-text" name="newuser[User]" value="$user[User]" id="User" /></td>
+    </tr>
+    <tr>
+      <td>密码</td>
+      <td>
+      		<input type="text" class="input-text" name="newuser[Password]" value="" id="Password" /> 
+      		<a href="javascript:;" id="createPass">生成密码</a>
+            {if $G[a]=='edit'}<span>不修改请留空</span>{/if}
+      </td>
+    </tr>
+    <tr>
+      <td>用户ID</td>
+      <td><input type="text" class="input-text" name="newuser[Uid]" value="$user[Uid]" /></td>
+    </tr>
+    <tr>
+      <td>组ID</td>
+      <td><input type="text" class="input-text" name="newuser[Gid]" value="$user[Gid]" /></td>
+    </tr>
+    <tr>
+      <td>目录</td>
+      <td><span>{echo C('ftp_dir')}</span> <input type="text" class="input-text" name="newuser[Dir]" value="$user[Dir]" id="Dir" /></td>
+    </tr>
+    <tr>
+      <td>状态</td>
+      <td>
+      	<label><input type="radio" name="newuser[Status]" value="1"{if $user[Status]} checked="checked"{/if} /> 可用</label>
+      	<label><input type="radio" name="newuser[Status]" value="0"{if !$user[Status]} checked="checked"{/if} /> 不可用</label>
+      </td>
+    </tr>
+    <tr>
+      <td>磁盘限额</td>
+      <td><input type="text" class="input-text" name="newuser[QuotaSize]" value="$user[QuotaSize]" /> MB</td>
+    </tr>
+    <tr>
+      <td>上传限速</td>
+      <td><input type="text" class="input-text" name="newuser[ULBandwidth]" value="$user[ULBandwidth]" /> KB/S</td>
+    </tr>
+    <tr>
+      <td>下载限速</td>
+      <td><input type="text" class="input-text" name="newuser[DLBandwidth]" value="$user[DLBandwidth]" /> KB/S</td>
+    </tr>
+</tbody>
+<tfoot>
+	<tr>
+    	<td></td>
+    	<td><input type="submit" name="btn-submit" class="submit" value="$lang[submit]" /></td>
+	</tr>
+</tfoot>
+</table>
+</form>
+</div>
+<script type="text/javascript">
+$("#userForm").submit(function(e) {
+    var user = $("#User").val();
+	var password = $("#Password").val();
+	if(user.length < 2) {
+		DSXUI.error('请输入账号');
+		return false;
+	}
+	{if $G[a]=='add'}
+	if(!DSXUtil.IsPassword(password)){
+		DSXUI.error('密码输入错误');
+		return false;
+	}
+	var flag = false;
+	$.ajax({
+		url:'/?m=$G[m]&c=$G[c]&a=checkuser&user='+user,
+		dataType:"json",
+		async:false,
+		success: function(json){
+			if(json.data.num == 0){
+				flag = true;
+			}
+		}
+	});
+	if(!flag) {
+		DSXUI.error('账号已被使用');
+		return false;
+	}
+	{else}
+	var flag = false;
+	$.ajax({
+		url:'/?m=$G[m]&c=$G[c]&a=checkuser&user='+user,
+		dataType:"json",
+		async:false,
+		success: function(json){
+			if(json.data.num == 1){
+				flag = true;
+			}
+		}
+	});
+	if(!flag) {
+		DSXUI.error('账号已被使用');
+		return false;
+	}
+	{/if}
+	return true;
+});
+$("#createPass").click(function(e) {
+    $("#Password").val(DSXUtil.randomString(10));
+});
+</script>
+{template footer_admin}
