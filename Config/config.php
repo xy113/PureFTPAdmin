@@ -5,7 +5,7 @@ return array(
 		'DB_HOST'               =>  'localhost', // 服务器地址
 		'DB_NAME'               =>  'pureftpd',          // 数据库名
 		'DB_USER'               =>  'pureftpd',      // 用户名
-		'DB_PWD'                =>  'juquUpUu23A7ppVa',          // 密码
+		'DB_PWD'                =>  '',          // 密码
 		'DB_PORT'               =>  '3306',        // 端口
 		'DB_PREFIX'             =>  '',    // 数据库表前缀
 		'DB_PCONNECT'           =>  1,        // 启用持久链接
