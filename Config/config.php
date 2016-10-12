@@ -15,13 +15,13 @@ return array(
 		'COOKIE_EXPIRE'    =>  0,       // Cookie有效期
 		'COOKIE_DOMAIN'    =>  '',      // Cookie有效域名
 		'COOKIE_PATH'      =>  '/',     // Cookie路径
-		'COOKIE_PREFIX'    =>  'dsxcms_',      // Cookie前缀 避免冲突
+		'COOKIE_PREFIX'    =>  'pureftp_',      // Cookie前缀 避免冲突
 		'COOKIE_SECURE'    =>  false,   // Cookie安全传输
 		'COOKIE_HTTPONLY'  =>  '',      // Cookie httponly设置
 		
 		//自动加载文件配置
-		'AUTO_LOAD_FUNCTIONS'=>array('wallet'),
-		'AUTO_LOAD_LANGS'=>array('post'),
+		'AUTO_LOAD_FUNCTIONS'=>array(),
+		'AUTO_LOAD_LANGS'=>array(),
 		'AUTO_LOAD_CONFIG'=>array(),
 		
 		/*应用配置*/
